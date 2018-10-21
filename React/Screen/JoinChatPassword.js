@@ -18,12 +18,12 @@ export default class JoinChatPassword extends Component {
   }
 
   InputPassword(){
-     var navigate = this.props.navigation;
+    var navigate = this.props.navigation;
     var key = navigate.getParam('key');
     navigate.state.params.callback(key, this.currentPasswordText);
-      this.props.navigation.goBack();
+    this.props.navigation.goBack();
   }
-
+  
   assignText(text){
     this.currentPasswordText = text;
   }

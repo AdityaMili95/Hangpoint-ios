@@ -45,6 +45,33 @@
     });
   }
 
+
+RCT_EXPORT_METHOD(ConfirmDialog:(NSString *)title detail: (NSString*)detail  callback:(RCTResponseSenderBlock)callback){
+  UIAlertController * alert = [UIAlertController
+                               alertControllerWithTitle:title
+                               message:detail
+                               preferredStyle:UIAlertControllerStyleAlert];
+  
+  UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    [_populated removeAllObjects];
+    callback(@[@true]);
+  }];
+  
+  UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Back" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+    callback(@[@false]);
+  }];
+  
+  [alert addAction:okayAction];
+  [alert addAction:cancelAction];
+  
+  
+  UIViewController *rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [rootViewController presentViewController:alert animated: YES completion: nil];
+  });
+}
+
+
 - (NSArray*) sortChat:(NSDictionary*) chats{
   
   NSMutableArray* keys = [[chats allKeys]mutableCopy];
@@ -395,4 +422,84 @@ RCT_EXPORT_METHOD(JoinChat:(NSString*) chatId user:(NSString*)uid password:(NSSt
   callback(@[newChatOpt, newMember, optNewUserInfo]);
 }
 
+
+RCT_EXPORT_METHOD(ConstructChatData:(NSDictionary*) data callback:(RCTResponseSenderBlock)callback){
+  BOOL isPassword = false;
+  
+  NSString* ChatName = [data valueForKey:@"name"];
+  NSString* Uid = [data valueForKey:@"uid"];
+  NSString* ChatPassword = [data valueForKey:@"password"];
+  NSString* ChatImage = [data valueForKey:@"image"];
+  
+  NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitSecond fromDate:[NSDate date]];
+  int time = [components second]*1000;
+  NSNumber* created_date = [NSNumber numberWithInt:time];
+  
+  if ([ChatPassword length] != 0){
+    isPassword = true;
+  }
+  
+  NSDictionary* opt = @{
+                        @"detail":@{
+                            @"chatName":ChatName,
+                            @"editType": @"insert",
+                            @"created_date": created_date,
+                            @"image": ChatImage
+                        },
+                        @"member":@{
+                            Uid:@{
+                                @"uid": Uid,
+                                @"memberType": @"insert"
+                            }
+                        }
+  };
+  
+  NSDictionary* idListOpt = @{
+                              @"detail":@{
+                                  @"chatName": ChatName,
+                                  @"created_date":created_date,
+                                  @"isPassword":[NSNumber numberWithBool:isPassword],
+                                  @"memberCount": @1,
+                                  @"image": ChatImage
+                              }
+  };
+  
+  callback(@[opt, idListOpt]);
+}
+
+RCT_EXPORT_METHOD(GetMemberCount:(NSString*) key callback:(RCTResponseSenderBlock)callback){
+  NSDictionary* chat = [self.populated valueForKey:key];
+  
+  if (chat == NULL){
+    callback(@[@NO]);
+    return;
+  }
+  
+  NSDictionary* members = [chat valueForKey:@"member"];
+  NSNumber* memberCount = [NSNumber numberWithInt:[[members allKeys] count]];
+  
+  callback(@[memberCount]);
+}
+
+RCT_EXPORT_METHOD(RemoveChat:(NSString*) key callback:(RCTResponseSenderBlock)callback){
+  [self.populated removeObjectForKey:key];
+}
+
+RCT_EXPORT_METHOD(ConstructLeftChat:(NSString*) uid callback:(RCTResponseSenderBlock)callback){
+  NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitSecond fromDate:[NSDate date]];
+  int time = [components second]*1000;
+  NSNumber* created_date = [NSNumber numberWithInt:time];
+  
+  NSDictionary* data = @{
+                         @"text": @"left chat group",
+                         @"date": created_date,
+                         @"uid": uid,
+                         @"isInfo": @true,
+                         @"read":@{
+                             uid: uid
+                             }
+  };
+  
+  callback(@[data]);
+}
 @end

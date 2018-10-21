@@ -33,6 +33,7 @@ export default class SearcChat extends Component {
     this.onErrorJoinCallback = this.onErrorJoinCallback.bind(this);
     this.onErrorPasswordJoinCallback = this.onErrorPasswordJoinCallback.bind(this);
     this.currentSearchText = "";
+    this.Back = this.Back.bind(this);
 
   }
 
@@ -70,6 +71,10 @@ export default class SearcChat extends Component {
 
   assignText(text){
     this.currentSearchText = text;
+  }
+
+  Back(){
+    this.props.navigation.goBack();
   }
 
   searchText(){
@@ -150,7 +155,7 @@ export default class SearcChat extends Component {
             </View>
         </View>
 
-        <TouchableOpacity style={(styles.CreateChatButton)} onPress={() => navigate('CreateChat')}>
+        <TouchableOpacity style={(styles.CreateChatButton)} onPress={() => navigate('CreateChat', {"user": this.state.user, "callback": this.Back } )}>
                   <Text style={[styles.buttonText]}>Create Chat</Text>
           </TouchableOpacity>
         </View>

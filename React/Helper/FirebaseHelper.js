@@ -61,11 +61,31 @@ export function UpdateData(ref, data, callback, param){
   });
 }
 
-export function PushData(ref, data, callback){
+export function SetData(ref, data, callback, param){
+  firebase.database().ref(ref).set(data, function(error){
+      if(callback){
+          callback(param, error);
+      }
+  });
+}
+
+export function RemoveData(ref, callback, param){
+  firebase.database().ref(ref).remove();
+}
+
+export function GetChatKey(ref, data, callback, param){
+    var newKey = firebase.database().ref(ref).push(data).key;
+
+    if (callback){
+      callback(data, newKey, param);
+    }
+}
+
+export function PushData(ref, data, callback, param){
   firebase.database().ref(ref).push(data);
 
   if (callback){
-    callback(data);
+    callback(data, param);
   }
 }
 
@@ -73,6 +93,7 @@ export function logOut(){
   GoogleSignin.signOut();
   firebase.auth().signOut();
 }
+
 
 export function handleGoogleLogin(){
 	

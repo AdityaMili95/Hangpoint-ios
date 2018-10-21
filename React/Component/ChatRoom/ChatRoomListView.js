@@ -50,6 +50,8 @@ export default class ChatRoomListView extends Component {
       if(!data[key]){
         continue;
       }
+
+      data[key]['key'] = key;
       arrData.push(data[key]);
     }
     return arrData;
@@ -119,17 +121,13 @@ export default class ChatRoomListView extends Component {
     return { dataBlob, sectionIds, rowIds };
   }
 
-  leftRoom(data){
-
-  }
-
    renderRow(data){
      let swipeBtns = [
        {
         text: 'Left',
         backgroundColor: 'red',
         underlayColor: 'rgba(0, 0, 1, 0.6)',
-        onPress: () => { this.leftRoom(rowData) }
+        onPress: () => { this.props.onleft(data) }
       }
     ];
     var lastChat = "";

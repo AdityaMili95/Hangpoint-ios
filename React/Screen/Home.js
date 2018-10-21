@@ -36,6 +36,7 @@ export default class Home extends Component {
      this.randomChat = this.randomChat.bind(this);
      this.getRandomChat = this.getRandomChat.bind(this);
      this.onErrorJoinCallback = this.onErrorJoinCallback.bind(this);
+     this.leftChat = this.leftChat.bind(this);
      
     var user= this.props.screenProps.user;
 
@@ -73,6 +74,29 @@ export default class Home extends Component {
      };
 
      fireHelper.ValueEvent('users/'+user.uid+"/chat", this.ChatListCallback);
+  }
+
+  leftChat(data){
+      var user= this.props.screenProps.user;
+
+      RoomHandler.GetMemberCount(data.key, function(resp){
+          if(!resp){
+            return;
+          }
+
+          if (resp - 1 == 0){
+              chatHelper.RemoveChat(data.key, user.uid);
+              RoomHandler.RemoveChat(data.key, function(){});
+              return;
+          }
+
+          RoomHandler.ConstructLeftChat(user.uid, function(obj){
+              chatHelper.LeftChat(data.key, user.uid, obj, resp);
+              RoomHandler.RemoveChat(data.key, function(){});
+          });
+          
+          
+      });
   }
 
   componentDidMount(){
@@ -268,7 +292,7 @@ export default class Home extends Component {
     sortedKeys = filterData.keys;
 
     return (
-        <ChatRoomListView sortByTime={!this.state.sortByGroup} data={chatData} sortedKey={sortedKeys} key={this.makeid}/>
+        <ChatRoomListView sortByTime={!this.state.sortByGroup} onleft = { this.leftChat } data={chatData} sortedKey={sortedKeys} key={this.makeid}/>
     );
   }
 
