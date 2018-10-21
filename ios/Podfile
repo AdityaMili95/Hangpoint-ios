@@ -10,6 +10,8 @@ target 'testsembilan' do
   target 'testsembilan-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
+    pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   end
 
   target 'testsembilanTests' do
