@@ -7,6 +7,7 @@ import Home from '../Screen/Home';
 import SearchChat from '../Screen/SearchChat';
 import CreateChat from '../Screen/CreateChat';
 import ChatPassword from '../Screen/JoinChatPassword';
+import Conversation from '../Screen/Conversation';
 import styles from '../Styles/Navigator';
 import TabIcon from '../Component/TabIcon';
 
@@ -71,6 +72,19 @@ export const StackNavigation = new StackNavigator(
         headerBackStyle: styles.StackTintStyle,
         headerTintColor:'#fff',
       },
+    },
+    Conversation:{
+        screen: Conversation,
+        navigationOptions: {
+          headerVisible: false,
+          headerMode: 'screen',
+          title: "",
+          headerTitleStyle: styles.StackTextStyle,
+          headerStyle: styles.StackStyle,
+          headerTitle: <Text style={styles.StackTextStyle}>HangPoint</Text>,
+          headerBackTitleStyle: styles.StackTintStyle,
+        headerBackStyle: styles.StackTintStyle,
+       }
     }
   },
 );

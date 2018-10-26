@@ -37,6 +37,7 @@ export default class Home extends Component {
      this.getRandomChat = this.getRandomChat.bind(this);
      this.onErrorJoinCallback = this.onErrorJoinCallback.bind(this);
      this.leftChat = this.leftChat.bind(this);
+     this.toConvers = this.toConvers.bind(this);
      
     var user= this.props.screenProps.user;
 
@@ -76,27 +77,46 @@ export default class Home extends Component {
      fireHelper.ValueEvent('users/'+user.uid+"/chat", this.ChatListCallback);
   }
 
-  leftChat(data){
+  leftChat(data, callback){
       var user= this.props.screenProps.user;
 
-      RoomHandler.GetMemberCount(data.key, function(resp){
-          if(!resp){
+      RoomHandler.ConfirmDialog("Are you sure?", "Left: "+ data.displayText, function(result){
+
+          if (!result){
             return;
           }
 
-          if (resp - 1 == 0){
-              chatHelper.RemoveChat(data.key, user.uid);
-              RoomHandler.RemoveChat(data.key, function(){});
-              return;
-          }
+          RoomHandler.GetMemberCount(data.key, function(resp){
+              if(!resp){
+                return;
+              }
 
-          RoomHandler.ConstructLeftChat(user.uid, function(obj){
-              chatHelper.LeftChat(data.key, user.uid, obj, resp);
-              RoomHandler.RemoveChat(data.key, function(){});
+              if (resp - 1 == 0){
+                  chatHelper.RemoveChat(data.key, user.uid);
+                  RoomHandler.RemoveChat(data.key, function(){});
+
+                  if(callback){
+                    callback();
+                  }
+                  return;
+              }
+
+              RoomHandler.ConstructLeftChat(user.uid, function(obj){
+                  chatHelper.LeftChat(data.key, user.uid, obj, resp);
+                  RoomHandler.RemoveChat(data.key, function(){});
+
+                  if(callback){
+                    callback();
+                  }
+              });
+              
           });
-          
-          
-      });
+    });
+  }
+
+  toConvers(data){
+    let { navigate } = this.props.navigation;
+    navigate('Conversation', {'user':this.props.screenProps.user, "data": data, "leftChat": this.leftChat});
   }
 
   componentDidMount(){
@@ -292,7 +312,7 @@ export default class Home extends Component {
     sortedKeys = filterData.keys;
 
     return (
-        <ChatRoomListView sortByTime={!this.state.sortByGroup} onleft = { this.leftChat } data={chatData} sortedKey={sortedKeys} key={this.makeid}/>
+        <ChatRoomListView toConvers = { this.toConvers } sortByTime={!this.state.sortByGroup} onleft = { this.leftChat } data={chatData} sortedKey={sortedKeys} key={this.makeid}/>
     );
   }
 

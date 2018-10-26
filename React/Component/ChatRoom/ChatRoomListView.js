@@ -145,7 +145,7 @@ export default class ChatRoomListView extends Component {
         <Swipeout right={swipeBtns}
         autoClose={true}
         backgroundColor= 'transparent'>
-          <ChatRoom data = {{name:data.displayText,'notRead': countNotRead,'image':data.image, 'date':data.lastChatDate,'desc':lastChat, isProfile:false}}/>;
+          <ChatRoom toConvers={ this.props.toConvers } data = {{key:data.key, name:data.displayText,'notRead': countNotRead,'image':data.image, 'date':data.lastChatDate,'desc':lastChat, isProfile:false}}/>;
         </Swipeout>
     )
    }

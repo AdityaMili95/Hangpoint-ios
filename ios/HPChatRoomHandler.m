@@ -53,7 +53,6 @@ RCT_EXPORT_METHOD(ConfirmDialog:(NSString *)title detail: (NSString*)detail  cal
                                preferredStyle:UIAlertControllerStyleAlert];
   
   UIAlertAction *okayAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
-    [_populated removeAllObjects];
     callback(@[@true]);
   }];
   

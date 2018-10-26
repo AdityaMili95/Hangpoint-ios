@@ -7,18 +7,10 @@ import ChatPicture from '../Component/ChatRoom/ChatPicture';
 import ChatName from '../Component/ChatRoom/ChatName';
 import ChatDescription from '../Component/ChatRoom/ChatDescription';
 import ChatDate from '../Component/ChatRoom/ChatDate';
-import ImagePicker from "react-native-image-picker";
+
 import * as chatHelper from '../Helper/ChatHelper.js';
+import * as selectImage from '../Helper/SelectImage.js';
 
-
-const options = {
-          title: 'Select Image',
-          //customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
-          storageOptions: {
-            skipBackup: true,
-            path: 'images',
-          },
-      };
 export default class CreateChat extends Component {
 
   constructor(props) {
@@ -41,27 +33,12 @@ export default class CreateChat extends Component {
      this.onCreated = this.onCreated.bind(this);
   }
 
-
-  selectImage(){
-
-    ImagePicker.showImagePicker(options, (response) => {
-
-        if (response.didCancel) {
-            
-        } else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        } else if (response.customButton) {
-          
-        } else {
-          const source = response.uri;
-          const displaySource = 'data:image/jpeg;base64,' + response.data;
-
-          this.setState({
+selectImage(){
+    selectImage.selectImage((displaySource)=>{
+        this.setState({
             imagePic: displaySource,
-          });
-        }
+        });
     });
-
   }
 
   createChat(){
