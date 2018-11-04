@@ -7,8 +7,13 @@ import Feather from 'react-native-vector-icons/Feather';
 
 import ChatOption from '../Component/Conversation/ChatOption'
 import styles from '../Styles/Conversation';
+import navStyle from '../Styles/Navigator';
 
 export default class Conversation extends Component {
+
+  static navigationOptions = ({navigation}) => {
+      return navigation.state.params;
+  }
 
   constructor(props) {
     super(props);
@@ -105,8 +110,43 @@ export default class Conversation extends Component {
 
      this.selectSticker = this.selectSticker.bind(this);
      this.sendSticker = this.sendSticker.bind(this);
+
+     var data = props.navigation.state.params.data;
+
+     var title = "HangPoint"
+
+     if (data){
+       title= data.name;
+     }
+
+     this.setTitleHeader(title);
   }
 
+  setTitleHeader = (title) => {
+
+    const {setParams} = this.props.navigation;
+    setParams( {
+          headerVisible: false,
+          headerMode: 'screen',
+          title: "",
+          headerTitleStyle: navStyle.StackTextStyle,
+          headerStyle: navStyle.StackStyle,
+          headerTitle: <Text style={navStyle.StackTextStyle}>{title}</Text>,
+          headerBackTitleStyle: navStyle.StackTintStyle,
+          headerBackStyle: navStyle.StackTintStyle,
+      });
+    
+  }
+
+  editChat = (key) => {
+    var navigate = this.props.navigation;
+    var data = navigate.state.params.data;
+    navigate.navigate('CreateChat', {"key": key, "title": "Edit", "user": navigate.state.params.user, "callback": this.tempBack, "isUpdate": true, "chatName": data.origName, "password": data.password, "imagePic": data.image });
+  }
+
+  tempBack = () => {
+      //DELETE THIS
+  }
   toggleSticker(){
     var showSticker = this.state.showSticker;
     this.setState({
@@ -607,7 +647,7 @@ export default class Conversation extends Component {
          </View>
       }
 
-      <ChatOption user= {navigate.state.params.user} data={navigate.state.params.data} goBack = {this.goBack} leftChat={navigate.state.params.leftChat}/>
+      <ChatOption user= {navigate.state.params.user} data={navigate.state.params.data} goBack = {this.goBack} editChat = {this.editChat} leftChat={navigate.state.params.leftChat}/>
        
       </View>
     </KeyboardAvoidingView>

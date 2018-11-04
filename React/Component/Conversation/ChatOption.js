@@ -54,7 +54,7 @@ export default class ChatOption extends Component {
             </TouchableOpacity>
 
 
-             <TouchableOpacity style={styles.chatOptionItem}>
+             <TouchableOpacity style={styles.chatOptionItem} onPress = { () => prop.editChat(prop.data.key)}>
               <View style={styles.chatOptionTopView}>
                   <Feather name="edit" type="material-community" backgroundColor="#3b5998" style={{alignSelf:'center',fontSize:15,color:'#000'}}></Feather>
               </View>

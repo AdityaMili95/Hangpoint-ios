@@ -192,10 +192,11 @@ RCT_EXPORT_METHOD(FetchChatDetail:(NSDictionary*) data key:(NSString*)key callba
     }else{
       NSDictionary* currData = (NSDictionary*)[_populated valueForKey:key];
       NSMutableDictionary* newData = [currData mutableCopy];
-      NSMutableString* displayText = [currData valueForKey:@"chatName"];
+      NSMutableString* displayText = [data valueForKey:@"chatName"];
       NSDictionary* member = [currData valueForKey:@"member"];
       NSString* finaltext = [self GetChatDisplaytext:displayText member:member];
       [newData setObject:finaltext forKey:@"displayText"];
+      [newData setObject:displayText forKey:@"origName"];
       [_populated setValue:newData forKey:key];
     }
   
@@ -276,6 +277,7 @@ RCT_EXPORT_METHOD(FetchChatMember:(NSDictionary*) data key:(NSString*)key callba
   
   [newData setObject:data forKey:@"member"];
   [newData setObject:finaltext forKey:@"displayText"];
+  [newData setObject:displayText forKey:@"origName"];
   [_populated setValue:newData forKey:key];
   callback(@[_populated,key, [NSNumber numberWithBool:exist]]);
 }
@@ -501,4 +503,66 @@ RCT_EXPORT_METHOD(ConstructLeftChat:(NSString*) uid callback:(RCTResponseSenderB
   
   callback(@[data]);
 }
+
+RCT_EXPORT_METHOD(ConstructEditChatMessage:(NSString*) name existing_name:(NSString*)existing_name pic:(NSString*)pic existing_pic:(NSString*)existing_pic password:(NSString*)password existing_password:(NSString*)existing_password uid:(NSString*)uid callback:(RCTResponseSenderBlock)callback){
+  NSMutableString* text = [@"updated chat profile" mutableCopy];
+ // NSString* name = [data valueForKey:@"chatName"];
+ // NSString* existing_name = [data valueForKey:@"beforeName"];
+  //NSString* password = [data valueForKey:@"password"];
+  //NSString* existing_password = [data valueForKey:@"beforePassword"];
+  //NSString* pic = [data valueForKey:@"imagePic"];
+  //NSString* existing_pic = [data valueForKey:@"beforePic"];
+  
+  BOOL picChanged = ![pic isEqualToString:existing_pic];
+  BOOL nameChanged = ![name isEqualToString:existing_name];
+  BOOL passChanged = ![password isEqualToString:existing_password];
+  
+  if(picChanged && nameChanged && passChanged){
+    text = [@"updated chat profile and password" mutableCopy];
+  }else if(picChanged && nameChanged){
+    text = [@"updated chat name and picture" mutableCopy];
+  }else if(picChanged && passChanged){
+    text = [@"updated chat picture and password" mutableCopy];
+  }else if(nameChanged && passChanged){
+    text = [@"updated chat name and password" mutableCopy];
+  }else if(picChanged){
+    text = [@"updated chat picture" mutableCopy];
+  }else if(nameChanged){
+    text = [@"updated chat name to " mutableCopy];
+    text = [[text stringByAppendingString:name] mutableCopy];
+  }else if(passChanged && [password length] > 0){
+    text = [@"updated chat password to " mutableCopy];
+    text = [[text stringByAppendingString:password] mutableCopy];
+  }else if(passChanged){
+    text = [@"removed chat's password" mutableCopy];
+  }
+  
+ // NSDictionary* user = [data valueForKey:@"user"];
+  //NSString* uid = [user valueForKey:@"uid"];
+  
+  NSDictionary* opt = @{
+    @"chatName": name,
+    @"image": pic,
+    @"password":password,
+    @"editType": @"update"
+  };
+  
+  NSDictionary* chatIdOpt = @{
+    @"chatName": name,
+    @"image": pic,
+    @"isPassword": [NSNumber numberWithBool:[password length] > 0],
+  };
+  
+  NSDictionary* optNewUserInfo = @{
+                                   @"text":text,
+                                   @"date":@1,
+                                   @"uid":uid,
+                                   @"isInfo":[NSNumber numberWithBool:YES],
+                                   @"read":@{
+                                       uid:uid
+                                       }
+                                   };
+  
+  callback(@[opt,chatIdOpt,optNewUserInfo]);
+};
 @end

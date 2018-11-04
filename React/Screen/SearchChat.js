@@ -155,7 +155,7 @@ export default class SearcChat extends Component {
             </View>
         </View>
 
-        <TouchableOpacity style={(styles.CreateChatButton)} onPress={() => navigate('CreateChat', {"user": this.state.user, "callback": this.Back } )}>
+        <TouchableOpacity style={(styles.CreateChatButton)} onPress={() => navigate('CreateChat', {"title": "Create", "user": this.state.user, "callback": this.Back, "isUpdate": false } )}>
                   <Text style={[styles.buttonText]}>Create Chat</Text>
           </TouchableOpacity>
         </View>

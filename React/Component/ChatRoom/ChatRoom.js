@@ -54,6 +54,22 @@ export default class ChatRoom extends Component {
 	 render(){
 	 	var prop = this.props;
     var data = prop.data;
+
+    if (!prop.toConvers){
+      return (
+        <View style={[styles.group,styles.myData]}>
+                    
+                      <ChatPicture style={styles} src={data.image} />
+
+                      <View  style={[styles.innerGroupView, styles.innerGroupViewDetail]}>
+                          <ChatName style={styles} name={data.name} />
+                          <ChatDescription style={styles} desc = {data.desc}/>
+                      </View>
+
+                      {this.detailBar(data)}  
+                    </View>
+      )
+    }
 	 	return (
 	 		 <TouchableOpacity onPress={() => this.props.toConvers(data)}>
                   <View style={[styles.group,styles.myData]}>

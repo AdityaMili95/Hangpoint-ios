@@ -50,16 +50,7 @@ export const StackNavigation = new StackNavigator(
       }
     },
     CreateChat:{
-        screen: CreateChat,
-        navigationOptions: {
-        title: "",
-        headerTitle: <Text style={styles.StackReverseTextStyle}>New Chat</Text>,
-        headerTitleStyle: styles.StackReverseTextStyle,
-        headerStyle: styles.StackReverseStyle,
-        headerBackTitleStyle: styles.StackTintStyle,
-        headerBackStyle: styles.StackTintStyle,
-        headerTintColor:'#fff',
-      },
+        screen: CreateChat
     },
     ChatPassword:{
         screen: ChatPassword,
@@ -75,16 +66,6 @@ export const StackNavigation = new StackNavigator(
     },
     Conversation:{
         screen: Conversation,
-        navigationOptions: {
-          headerVisible: false,
-          headerMode: 'screen',
-          title: "",
-          headerTitleStyle: styles.StackTextStyle,
-          headerStyle: styles.StackStyle,
-          headerTitle: <Text style={styles.StackTextStyle}>HangPoint</Text>,
-          headerBackTitleStyle: styles.StackTintStyle,
-        headerBackStyle: styles.StackTintStyle,
-       }
     }
   },
 );

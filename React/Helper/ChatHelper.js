@@ -88,6 +88,29 @@ export function LeftChat(key, uid, data, memberCount){
   fireHelper.RemoveData("users/"+uid+"/chat/"+ key);
 }
 
+export function EditChat(param){
+  console.log(param);
+  fireHelper.UpdateData('chats/'+param.key+"/detail", param.opt, EditChatName, param);
+}
+
+export function EditChatName(param){
+  fireHelper.SetData("/chatIdList/"+param.key+"/detail/chatName", param.chatIdOpt.chatName, EditChatIsPassword, param);
+}
+
+export function EditChatImage(param){
+  fireHelper.SetData("/chatIdList/"+param.key+"/detail/image", param.chatIdOpt.image, EditChatIsPassword, param);
+}
+
+export function EditChatIsPassword(param){
+    fireHelper.SetData("/chatIdList/"+param.key+"/detail/isPassword", param.chatIdOpt.isPassword, PushChat, param);
+}
+
+export function PushChat(param){
+  fireHelper.PushData('chats/'+param.key+"/chat", param.chatData, param.callback, param);
+}
+
+
+
 
 
 

@@ -55,6 +55,8 @@ export default class Home extends Component {
         sortedChatKey:[]
      };
 
+      
+
   }
 
   initializeRooms(props){
@@ -310,7 +312,7 @@ export default class Home extends Component {
     var filterData = this.FilterBySearch(this.state.searchText, chatData, sortedKeys);
     chatData = filterData.data;
     sortedKeys = filterData.keys;
-
+    
     return (
         <ChatRoomListView toConvers = { this.toConvers } sortByTime={!this.state.sortByGroup} onleft = { this.leftChat } data={chatData} sortedKey={sortedKeys} key={this.makeid}/>
     );
