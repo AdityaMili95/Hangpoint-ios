@@ -32,6 +32,23 @@ export default class ChatItem extends Component {
     var prop = this.props;
     var data = prop.data;
 
+    if(prop.isDummy){
+        return (
+            <View style={[styles.group,styles.myData]}>
+                    
+                  <ChatPicture style={styles} src={"https://firebasestorage.googleapis.com/v0/b/hangpoint-4cdd3.appspot.com/o/-LIZpcyRUnVqdTn0zfBc?alt=media&token=1eb27dd1-e59a-4e85-9ffa-543947fb508c"}/>
+                      <View  style={[styles.innerGroupView, styles.innerGroupViewDetail]}>
+                          <ChatName style={styles} name={prop.dummyName} />
+                          <ChatDescription style={styles} desc = {prop.dummyDesc}/>
+                      </View>
+
+                      <View  style={[styles.innerGroupView, styles.innerGroupViewNotif]}>
+                          <ChatDate style={styles} date ={"now"} />
+                      </View>  
+              </View>
+          );
+    }
+
     return (
        <View style={[styles.group,styles.myData]}>
                     

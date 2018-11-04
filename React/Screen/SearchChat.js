@@ -20,7 +20,7 @@ export default class SearcChat extends Component {
     var user = props.navigation.getParam('user');
     this.state ={
       searchText:"",
-      isloading:true,
+      isloading:false,
       data: {},
       user: user,
       placeholder: props.navigation.getParam('placeholder'),
@@ -250,6 +250,19 @@ formatDate = (date) => {
     if (this.state.isloading){
         return this.ChatPlaceholder();
     }
+
+    var dummyName = "Search Chat";
+    var dummyDesc = "meet peoples and chat around";
+
+    if (this.state.isFindUser){
+      dummyName = "Search People";
+      dummyDesc = "invite and chat together";
+    }
+
+    if (Object.keys(this.state.data) == 0){
+          return <ChatItem isDummy = {true} dummyName={dummyName} dummyDesc={dummyDesc}/>;
+    }
+
     return this.ChatSearchResult()
   }
 
