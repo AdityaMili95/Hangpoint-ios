@@ -530,6 +530,34 @@ RCT_EXPORT_METHOD(ConstructLeftChat:(NSString*) uid callback:(RCTResponseSenderB
   callback(@[data]);
 }
 
+RCT_EXPORT_METHOD(ConstructInvitePeople:(NSString*) uid invited:(NSString*)invited chatKey:(NSString*)chatKey callback:(RCTResponseSenderBlock)callback){
+  
+  NSDictionary* peopleOpt = @{
+    @"uid": invited,
+    @"memberType":@"insert"
+  };
+  
+  NSDictionary* newChatOpt = @{
+  chatKey:@{
+          @"chat_id": chatKey
+      }
+  };
+  
+  NSDictionary* optInviteUserInfo = @{
+                                      @"text":@"invited to chat group",
+                                      @"date":@1,
+                                      @"uid":uid,
+                                      @"isInfo":[NSNumber numberWithBool:YES],
+                                      @"invite":invited,
+                                      @"read":@{
+                                          uid:uid
+                                          }
+  };
+  
+  callback(@[peopleOpt, newChatOpt, optInviteUserInfo]);
+  
+}
+
 RCT_EXPORT_METHOD(ConstructEditChatMessage:(NSString*) name existing_name:(NSString*)existing_name pic:(NSString*)pic existing_pic:(NSString*)existing_pic password:(NSString*)password existing_password:(NSString*)existing_password uid:(NSString*)uid callback:(RCTResponseSenderBlock)callback){
   NSMutableString* text = [@"updated chat profile" mutableCopy];
  // NSString* name = [data valueForKey:@"chatName"];

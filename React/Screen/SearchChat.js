@@ -74,7 +74,21 @@ export default class SearcChat extends Component {
   }
 
   inviteChat = (userKey, data) =>{
+      var obj = this;
+      var chatKey = this.state.chatKey;
 
+      RoomHandler.ConstructInvitePeople(this.state.user.uid ,userKey, this.state.chatKey, function(peopleOpt, newChatOpt, optInviteUserInfo){
+          optInviteUserInfo['date'] = new Date().getTime();
+
+          chatHelper.InsertMember({
+              "uid": userKey,
+              "key": chatKey,
+              "peopleOpt": peopleOpt,
+              "newChatOpt": newChatOpt,
+              "chatData": optInviteUserInfo,
+              "callback": obj.Back
+          });
+      });
   }
 
   onErrorJoinCallback(){
@@ -188,7 +202,6 @@ formatDate = (date) => {
     fireHelper.DetachEvent("/users");
     snapshot = this.FetchAllChatDataToArray(snapshot);
     RoomHandler.GetSearchUserData(snapshot, text, this.state.user.uid, this.state.chatKey, (data)=>{
-      console.log(data);
         this.setState({
             isloading: false,
             data:data,

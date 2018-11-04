@@ -109,6 +109,13 @@ export function PushChat(param){
   fireHelper.PushData('chats/'+param.key+"/chat", param.chatData, param.callback, param);
 }
 
+export function InsertMember(param){
+  fireHelper.UpdateData("/chats/"+param.key+"/member/"+param.uid, param.peopleOpt, EditUserChat, param);
+}
+
+export function EditUserChat(param){
+    fireHelper.UpdateData("/users/"+param.uid+"/chat", param.newChatOpt, PushChat, param);
+}
 
 
 
