@@ -15,6 +15,19 @@ export default class ChatItem extends Component {
     super(props);
    }
 
+   getSubmitButton = (key, data, isFindUser)=>{
+      var prop = this.props;
+
+      if (isFindUser){
+          return (<TouchableOpacity style={[styles.buttonJoin]} onPress={()=> prop.inviteChat(key, data)}y>
+                                      <Text style={[{fontSize:10,textAlign:'center',color:"#fff"}]}>Invite</Text>
+                                </TouchableOpacity>);    
+      }
+      return (<TouchableOpacity style={[styles.buttonJoin]} onPress={()=> prop.joinChat(key, data)}y>
+                                      <Text style={[{fontSize:10,textAlign:'center',color:"#fff"}]}>Join</Text>
+                                </TouchableOpacity>);
+   }
+
    render(){
     var prop = this.props;
     var data = prop.data;
@@ -33,9 +46,7 @@ export default class ChatItem extends Component {
                           <ChatDate style={styles} date ={data.date} />
 
                           <View  style={[styles.notifBottom]}>
-                                <TouchableOpacity style={[styles.buttonJoin]} onPress={()=> prop.joinChat(prop.chatKey, data)}y>
-                                      <Text style={[{fontSize:10,textAlign:'center',color:"#fff"}]}>Join</Text>
-                                </TouchableOpacity>
+                                { this.getSubmitButton(prop.chatKey, data, prop.isFindUser) }
                           </View>
                       </View>  
               </View>

@@ -116,16 +116,42 @@ RCT_EXPORT_METHOD(ConfirmDialog:(NSString *)title detail: (NSString*)detail  cal
   return [keys copy];
 }
 
-RCT_EXPORT_METHOD(GetSearchChatData :(NSDictionary*) data searchKey:(NSString *)searchkey  callback:(RCTResponseSenderBlock)callback){
-  NSArray* keys = [data allKeys];
+RCT_EXPORT_METHOD(GetSearchUserData :(NSArray*) data searchKey:(NSString *)searchkey uid:(NSString*)uid chatKey:(NSString*)chatKey  callback:(RCTResponseSenderBlock)callback){
+  
+  NSDictionary* chatData = [_populated objectForKey:chatKey];
+  NSMutableDictionary* memberdata = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary* res = [[NSMutableDictionary alloc] init];
+  
+  if (chatData != nil) {
+    memberdata = [chatData objectForKey:@"member"];
+  }
+  
+   for (int i=0; i< [data count]; i++){
+     NSDictionary* currData = data[i];
+     NSString* userID = [currData valueForKey:@"id"];
+     NSDictionary* data = [currData objectForKey:@"data"];
+     NSString* username = [data valueForKey:@"name"];
+     NSString* pp = [data valueForKey:@"pp"];
+     if([userID isEqualToString:uid] || [username rangeOfString:searchkey options:NSCaseInsensitiveSearch].location == NSNotFound || [memberdata objectForKey:userID] != nil){
+       continue;
+     }
+     
+     [data setValue:pp forKey:@"image"];
+     [res setObject:data forKey:userID];
+   }
+  
+  callback(@[res]);
+}
+
+RCT_EXPORT_METHOD(GetSearchChatData :(NSArray*) data searchKey:(NSString *)searchkey  callback:(RCTResponseSenderBlock)callback){
   NSArray* currPopulateKeys = [_populated allKeys];
   NSMutableDictionary* listSearch = [[NSMutableDictionary alloc] init];
   
-  for (int i=0; i< [keys count]; i++){
-    NSMutableDictionary* details = [data[keys[i]] valueForKey:@"detail"];
+  for (int i=0; i< [data count]; i++){
+    NSMutableDictionary* details = [data[i] valueForKey:@"detail"];
     NSMutableString* chatName = [details valueForKey:@"chatName"];
-    
-    if ([_populated objectForKey:keys[i]] == nil && [chatName rangeOfString:searchkey options:NSCaseInsensitiveSearch].location != NSNotFound ){
+    NSString* chatID = [data[i] valueForKey:@"id"];
+    if ([_populated objectForKey:chatID] == nil && [chatName rangeOfString:searchkey options:NSCaseInsensitiveSearch].location != NSNotFound ){
       
       BOOL password = [[details valueForKey: @"isPassword"] boolValue];
       NSString* desc = @"Public Chat every one can join";
@@ -153,7 +179,7 @@ RCT_EXPORT_METHOD(GetSearchChatData :(NSDictionary*) data searchKey:(NSString *)
                                  @"isPassword": [NSNumber numberWithBool:password ],
       };
       
-      [listSearch setObject:currData forKey:keys[i]];
+      [listSearch setObject:currData forKey:chatID];
     }
     
   }

@@ -10,6 +10,9 @@ import ChatPlaceholder from '../Component/ChatRoom/ChatPlaceholder'
 var RoomHandler = NativeModules.HPChatRoomHandler;
 
 export default class SearcChat extends Component {
+  static navigationOptions = ({navigation}) => {
+      return navigation.state.params;
+  }
 
   constructor(props) {
     super(props);
@@ -19,7 +22,10 @@ export default class SearcChat extends Component {
       searchText:"",
       isloading:true,
       data: {},
-      user: user
+      user: user,
+      placeholder: props.navigation.getParam('placeholder'),
+      chatKey: props.navigation.getParam('key'),
+      isFindUser: props.navigation.getParam('isFindUser')
     }
 
     this.joinChatData = this.joinChatData.bind(this);
@@ -34,7 +40,23 @@ export default class SearcChat extends Component {
     this.onErrorPasswordJoinCallback = this.onErrorPasswordJoinCallback.bind(this);
     this.currentSearchText = "";
     this.Back = this.Back.bind(this);
+    this.setTitleHeader(props.navigation.getParam('title'));
 
+  }
+
+   setTitleHeader = (title) => {
+
+    const {setParams} = this.props.navigation;
+
+    setParams( {
+        title: "",
+        headerTitle: <Text style={styles.StackReverseTextStyle}>{title}</Text>,
+        headerTitleStyle: styles.StackReverseTextStyle,
+        headerStyle: styles.StackReverseStyle,
+        headerBackTitleStyle: styles.StackTintStyle,
+        headerBackStyle: styles.StackTintStyle,
+        headerTintColor:'#fff',
+      }); 
   }
 
   joinChatData (key, data){
@@ -51,12 +73,15 @@ export default class SearcChat extends Component {
     this.asyncJoinChat(key, "", this.onErrorJoinCallback)
   }
 
+  inviteChat = (userKey, data) =>{
+
+  }
+
   onErrorJoinCallback(){
     RoomHandler.ShowErrorJoin("Join Chat Failed", "Try again later" ,()=>{});
   }
 
   onErrorPasswordJoinCallback(){
-    return;
     RoomHandler.ShowErrorJoin("Join Chat Failed", "Password correct?" ,()=>{});
   }
 
@@ -91,11 +116,89 @@ export default class SearcChat extends Component {
       isloading: true
     });
 
+    if (this.state.isFindUser){
+      fireHelper.ValueEvent("/users", this.allUserList, text);  
+      return;
+    }
     fireHelper.ValueEvent("/chatIdList", this.allChatList, text);
   }
 
+  FetchAllChatDataToArray = (snapshot)=>{
+    var data = [];
+
+    if (!snapshot){
+      return data;
+    }
+
+    for (key in Object.keys(snapshot)){
+      currKey = Object.keys(snapshot)[key];
+      snapshot[currKey]["id"] = currKey;
+
+      if (snapshot[currKey]["data"] && snapshot[currKey]["data"]["lastloggedin"]){
+        var lastActive=this.formatDate(snapshot[currKey]["data"]["lastloggedin"]);
+        lastActive="Last logged in at "+lastActive;
+        snapshot[currKey]["data"]["desc"] = lastActive;
+      }
+
+      data.push(snapshot[currKey]);
+    }
+
+    return data;
+  }
+
+getDateString = (date) => {
+   var monthNames = [
+    "Jan", "Feb", "Mar",
+    "Apr", "May", "Jun", "Jul",
+    "Aug", "Sep", "Oct",
+    "Nov", "Dec"
+  ];
+
+  var day = date.getDate();
+  var monthIndex = date.getMonth();
+  var year = date.getFullYear();
+  return day + ' ' + monthNames[monthIndex] + ' ' + year;
+}
+
+
+formatAMPM = (date) => {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  hours = hours < 10 ? '0'+hours : hours;
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var timeString = hours + ':' + minutes + ' ' + ampm;
+  return timeString;
+}
+
+formatDate = (date) => {
+    date=new Date(date);
+    var now=new Date();
+
+    if(date.getDate()==now.getDate()&&date.getMonth()==now.getMonth()&&date.getFullYear()==now.getFullYear()){
+      return this.formatAMPM(date);
+    }
+    return this.getDateString(date);
+}
+
+
+  allUserList = (snapshot, text) => {
+    fireHelper.DetachEvent("/users");
+    snapshot = this.FetchAllChatDataToArray(snapshot);
+    RoomHandler.GetSearchUserData(snapshot, text, this.state.user.uid, this.state.chatKey, (data)=>{
+      console.log(data);
+        this.setState({
+            isloading: false,
+            data:data,
+        });
+    });
+  }
+
   allChatList(snapshot, text){
-    fireHelper.DetachEvent("/chatIdList")
+    fireHelper.DetachEvent("/chatIdList");
+    snapshot = this.FetchAllChatDataToArray(snapshot);
     RoomHandler.GetSearchChatData(snapshot, text, (data)=>{
         this.setState({
             isloading: false,
@@ -120,7 +223,7 @@ export default class SearcChat extends Component {
       var keys = Object.keys(data);
 
       var chatList = keys.map((key,idx) => {
-          return <ChatItem data={data[key]}  chatKey={key} key={key} joinChat = {this.joinChatData} />
+          return <ChatItem data={data[key]}  chatKey={key} key={key} inviteChat = {this.inviteChat} joinChat = {this.joinChatData} isFindUser = {this.state.isFindUser}/>
       });
 
       return (
@@ -138,6 +241,7 @@ export default class SearcChat extends Component {
   }
 
   render() {
+    var state= this.state;
     let { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
@@ -145,7 +249,7 @@ export default class SearcChat extends Component {
         <View style={styles.searchChat}>
             <View style={[styles.innerInputText, styles.innerChatInput]}>
 
-                    <View style={[styles.innerInputText, styles.chatInputHolder]}><TextInput style={styles.chatInput} placeholderTextColor = "black" onChangeText={(text)=> this.assignText(text)} placeholder="Search Chat"/></View>
+                    <View style={[styles.innerInputText, styles.chatInputHolder]}><TextInput style={styles.chatInput} placeholderTextColor = "black" onChangeText={(text)=> this.assignText(text)} placeholder={state.placeholder}/></View>
 
                     <TouchableOpacity style={(styles.innerInputText, styles.stickerButtonHolder)} onPress={()=> this.searchText()}>
                       <View style={styles.sendButton}>
@@ -155,9 +259,11 @@ export default class SearcChat extends Component {
             </View>
         </View>
 
+        {(!state.isFindUser) && 
         <TouchableOpacity style={(styles.CreateChatButton)} onPress={() => navigate('CreateChat', {"title": "Create", "user": this.state.user, "callback": this.Back, "isUpdate": false } )}>
                   <Text style={[styles.buttonText]}>Create Chat</Text>
           </TouchableOpacity>
+        }
         </View>
           {this.ChatDataRender()}
       </View>

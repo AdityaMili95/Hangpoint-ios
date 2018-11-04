@@ -144,9 +144,16 @@ export default class Conversation extends Component {
     navigate.navigate('CreateChat', {"key": key, "title": "Edit", "user": navigate.state.params.user, "callback": this.tempBack, "isUpdate": true, "chatName": data.origName, "password": data.password, "imagePic": data.image });
   }
 
-  tempBack = () => {
-      //DELETE THIS
+  findUser = (key) => {
+    var navigate = this.props.navigation;
+    var data = navigate.state.params.data;
+    navigate.navigate('FindChat', {"user": navigate.state.params.user, "title": "Invite User","placeholder":"Search Username", "isFindUser": true, "key": key});
   }
+
+  tempBack = () => {
+      
+  }
+
   toggleSticker(){
     var showSticker = this.state.showSticker;
     this.setState({
@@ -647,7 +654,7 @@ export default class Conversation extends Component {
          </View>
       }
 
-      <ChatOption user= {navigate.state.params.user} data={navigate.state.params.data} goBack = {this.goBack} editChat = {this.editChat} leftChat={navigate.state.params.leftChat}/>
+      <ChatOption user= {navigate.state.params.user} data={navigate.state.params.data} goBack = {this.goBack} editChat = {this.editChat} leftChat={navigate.state.params.leftChat} findUser = {this.findUser}/>
        
       </View>
     </KeyboardAvoidingView>

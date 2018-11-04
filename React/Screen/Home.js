@@ -197,7 +197,6 @@ export default class Home extends Component {
 
   ChatMemberList(snapshot, key){
      RoomHandler.FetchChatMember(snapshot,key, (data,key, exist)=>{
-
         if(exist){
           this.setState({
               chatData: data
@@ -401,7 +400,7 @@ export default class Home extends Component {
                <TouchableOpacity
                   style={[styles.button]}
                   underlayColor='#fff'
-                  onPress={() => navigate('FindChat', {'user':user})}
+                  onPress={() => navigate('FindChat', {'title':"Find Chat",'user':user, "placeholder":"Search Chat"})}
                   >
                   <Text style={styles.buttonText}>Browse Chat</Text>
                 </TouchableOpacity>

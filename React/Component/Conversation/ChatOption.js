@@ -35,7 +35,7 @@ export default class ChatOption extends Component {
 
     return (
         <View style={styles.chatOptionHolder}>
-          <TouchableOpacity style={styles.chatOptionItem}>
+          <TouchableOpacity style={styles.chatOptionItem} onPress = { () => prop.findUser(prop.data.key)}>
               <View style={styles.chatOptionTopView}>
                   <Feather name="user-plus" type="material-community" backgroundColor="#3b5998" style={{alignSelf:'center',fontSize:15,color:'#000'}}></Feather>
               </View>

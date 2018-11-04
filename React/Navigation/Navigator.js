@@ -39,15 +39,6 @@ export const StackNavigation = new StackNavigator(
     },
     FindChat:{
       screen: SearchChat,
-       navigationOptions: {
-        title: "",
-        headerTitle: <Text style={styles.StackReverseTextStyle}>Find Chat</Text>,
-        headerTitleStyle: styles.StackReverseTextStyle,
-        headerStyle: styles.StackReverseStyle,
-        headerBackTitleStyle: styles.StackTintStyle,
-        headerBackStyle: styles.StackTintStyle,
-        headerTintColor:'#fff',
-      }
     },
     CreateChat:{
         screen: CreateChat
